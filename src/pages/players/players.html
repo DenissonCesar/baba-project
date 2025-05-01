@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Times</title>
+</head>
+<body>
+    <div>
+        <label for="nomeJogador">Nome: </label>
+        <input type="text" id="nomeJogador">
+
+        <div id="habilidade">
+            <label for="estrelasJogador">Estrelas: </label>
+            <input type="number" min="1" max="5" id="estrelaJogador">
+        </div>
+
+        <div id="lista_jogadores"></div>
+
+        <button onclick="cadastrar()">Cadastrar</button>
+        <button onclick="finalizar()">Finalizar</button>
+    </div>
+</body>
+<script src="players.js">
+   /* function cadastrar() {
+        let jogador = document.getElementById('nomeJogador').value 
+        let estrelas = Number(document.getElementById('estrelaJogador').value)
+
+        let resposta = document.getElementById('jogador_cadastrado')
+        resposta.innerHTML += `${jogador} tem ${estrelas} estrelas <br/>`
+    } */
+</script>
+</html>

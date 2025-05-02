@@ -1,39 +1,44 @@
-
-let continuar = true
-const jogadores = []
-const total_estrelas = []
-
+let cadastrando = true;
+const jogadores = [];
+let total_estrelas = 0
 
 function cadastrar() {
-    if (!continuar) {
-        alert("[ERRO] Insira os dados corretamente")
-        return
-    }
-    
-    //Cadastrar jogador
-    const jogador = document.getElementById('nomeJogador').value
+  if (!cadastrando) {
+    alert("Cadastro finalizado. Não é possível adicionar novos jogadores.");
+    return;
+  }
 
-    //Se tiver jogador, jogador é adicionado no array
-    if (jogador) {
-        jogadores.push(jogador)
-    }
-    //Cadastrar estrelas
-    let estrelas = Number(document.getElementById('estrelaJogador').value)
+  const nome_input = document.getElementById('nomeJogador');
+  const estrelas_input = document.getElementById('estrelaJogador');
+  
 
-    //Se tiver estrelas, estrelas é adicionado no array
-    if (estrelas) {
-        total_estrelas.push(estrelas)
-    }
-    
-    const lista_jogadores = document.getElementById('lista_jogadores')
-    lista_jogadores.innerHTML += `${jogador}: ${estrelas} estrelas ${jogadores} <br/> <br/> `
-    
+  const nome = nome_input.value.trim();
+  const estrelas = parseInt(estrelas_input.value);
+  
+  total_estrelas += estrelas
 
-    
+  if (nome && estrelas >= 1 && estrelas <= 5) {
+    const jogador = { nome, estrelas };
+    jogadores.push(jogador);
 
+    const li = document.createElement('li');
+    li.textContent = `${nome} - ${"⭐".repeat(estrelas)}`;
+    document.getElementById('lista_jogadores').appendChild(li);
+
+    nome_input.value = "";
+    estrelas_input.value = "";
+
+    console.log("Jogador cadastrado:", jogador);
+  } else {
+    alert("Digite um nome e uma quantidade de estrelas válida (1 a 5).");
+  }
 }
 
+
+
 function finalizar() {
-    continuar = false
-    alert("Cadastramento encerrado.")
+  cadastrando = false;
+  alert("Cadastro finalizado. Não é possível adicionar novos jogadores.");
+  console.log("Jogadores cadastrados:", jogadores);
+  window.location.href = '../times/times.html'
 }

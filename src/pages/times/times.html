@@ -9,13 +9,12 @@
     <h2>Quantos jogadores vão ser em cada time?</h2>
 
     <div id="times_add">
-        <p>Números de jogadores por time: </p> <input type="number" id="numero_jogadores">
-        <button onclick="gerar_times()">Gerar</button>
+        <p>Números de jogadores por time: </p> <input type="number" min="1" id="numero_jogadores">
+        <button id="btnGerarTimes">Gerar</button>
     </div>
 
-    <div id="resultado_times">
+    <ul id="lista_times"></ul>
 
-    </div>
     
 </body>
 <script src="times.js"></script>

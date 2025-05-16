@@ -2,6 +2,7 @@ window.addEventListener("DOMContentLoaded", function () {
   const jogadores = JSON.parse(localStorage.getItem("jogadores")) || [];
   console.log(jogadores);
 
+  const header = this.document.getElementById("header")
   const btnGerarTimes = document.getElementById("btnGerarTimes");
   const listaTimes = document.getElementById("lista_times");
   const divJogadores = this.document.getElementById("times_add")
@@ -93,14 +94,17 @@ window.addEventListener("DOMContentLoaded", function () {
         }
       }, 1000);
     });
+
+    
     
 
     function iniciarJogos(times) {
+      header.remove()
       listaTimes.innerHTML = "<h3>Confronto Atual</h3>";
       const fila = [...times]; // Cópia da lista de times
       const timeAtual = fila.shift(); // Primeiro time assume o trono
       novoReiDaMesa(timeAtual, fila); 
-      inputTempo.innerHTML = "Qualqu"
+
     }
 
     function novoReiDaMesa(rei, fila) {
@@ -125,55 +129,105 @@ window.addEventListener("DOMContentLoaded", function () {
     
       listaTimes.appendChild(confrontoEl);
       
-
+      //Criacão do Timer
       const cronometroEl = document.createElement("p")
       cronometroEl.id ="cronometro"
       listaTimes.appendChild(cronometroEl)
+      const controles = document.createElement("div")
+
+      const btnPausar = document.createElement("button")
+      btnPausar.textContent = "Pausar"
+
+      const btnRetomar = document.createElement("button")
+      btnRetomar.textContent = "Retomar"
+
+      const btnReiniciar = document.createElement("button")
+      btnReiniciar.textContent = "Reiniciar"
+
+      controles.appendChild(btnPausar)
+      controles.appendChild(btnRetomar)
+      controles.appendChild(btnReiniciar)
+      listaTimes.appendChild(controles)
 
       const tempoDigitado = inputTempo.value || "00:00"
       const [min, sec] = tempoDigitado.split(":").map(Number)
       let tempoRestante = (min * 60) + sec
+      let tempoInicial = tempoRestante
+      let intervaloCronometro = null
 
-      if (isNaN(tempoRestante) || tempoRestante <= 0) {
-        cronometroEl.textContent = "⏱️ Tempo inválido ou não informado."
-      } else {
-        const intervaloCronometro = setInterval(() => {
-          const minutos = String(Math.floor(tempoRestante/60)).padStart(2, "0")
-          const segundos = String(tempoRestante % 60).padStart(2, "0")
-          cronometroEl.textContent = `⏳ ${minutos}:${segundos}`
+      function atualizarDisplay() {
+        const minutos = String(Math.floor(tempoRestante / 60)).padStart(2, "0")
+        const segundos = String(tempoRestante % 60).padStart(2, "0")
+        cronometroEl.textContent = `⏳ ${minutos}:${segundos}`
+      }
 
+      function iniciarContagem() {
+        if (intervaloCronometro !== null) return 
+
+        intervaloCronometro = setInterval(() => {
           if (tempoRestante <= 0) {
             clearInterval(intervaloCronometro)
+            intervaloCronometro = null
             cronometroEl.textContent = "⏱️ Tempo esgotado!"
+            return 
           }
-  
+
           tempoRestante--
-        },1000)
+          atualizarDisplay()
+        }, 1000)
+      }
 
-        const pararContagem = () => clearInterval(intervaloCronometro);
-
-        document.getElementById("vitoriaRei").addEventListener("click", pararContagem);
-        document.getElementById("vitoriaDesafiante").addEventListener("click", pararContagem);
-        document.getElementById("finalizarJogo").addEventListener("click", pararContagem);
+      function pausarContagem() {
+        clearInterval(intervaloCronometro)
+        intervaloCronometro = null
         
       }
+
+      function reiniciarContagem() {
+        tempoRestante = tempoInicial
+        atualizarDisplay()
+        iniciarContagem()
+      }
+
+      atualizarDisplay()
+      iniciarContagem()
+
+      btnPausar.addEventListener("click", pausarContagem)
+      btnRetomar.addEventListener("click", iniciarContagem)
+      btnReiniciar.addEventListener("click", () => {
+        pausarContagem()
+        reiniciarContagem()
+      })
+      
     
+      const pararContagem = () => pausarContagem
+
+
       document.getElementById("vitoriaRei").addEventListener("click", () => {
         alert("🏆 Time 1 venceu e continua!");
         confrontoEl.remove();
+        cronometroEl.remove()
+        controles.remove()
         fila.push(desafiante); // Desafiante volta pro fim da fila
         novoReiDaMesa(rei, fila);
+        pararContagem
       });
     
       document.getElementById("vitoriaDesafiante").addEventListener("click", () => {
         alert("⚔️ Time 2 venceu e assume o lugar!");
         confrontoEl.remove();
+        cronometroEl.remove()
+        controles.remove()
         fila.push(rei); // Rei derrotado vai pro fim da fila
         novoReiDaMesa(desafiante, fila);
+        pararContagem
       });
     
       document.getElementById("finalizarJogo").addEventListener("click", () => {
         confrontoEl.remove();
+        cronometroEl.remove()
+        controles.remove()
+        pararContagem
         listaTimes.innerHTML = `
           <h2>✅ Jogo Finalizado</h2>
           <p>Último time vencedor: ${listarJogadores(rei)}</p>
